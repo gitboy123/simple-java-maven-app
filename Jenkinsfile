@@ -5,6 +5,9 @@ pipeline {
             args '-v /root/.m2:/root/.m2'
         }
     }
+    environment {
+        CI = 'true'
+    }
     stages {
         stage('Build') {
             steps {
@@ -21,9 +24,20 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') { 
+       stage('Deliver for development') {
+            when {
+                branch 'development'
+            }
             steps {
-                sh './jenkins/scripts/deliver.sh' 
+		sh './jenkins/scripts/deliver.sh'
+            }
+        }
+       stage('Deploy for production') {
+            when {
+                branch 'production'
+            }
+            steps {
+		sh './jenkins/scripts/deliver.sh'
             }
         }
     }
